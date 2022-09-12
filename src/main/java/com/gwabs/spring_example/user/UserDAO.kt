@@ -1,67 +1,110 @@
-package com.gwabs.spring_example.user;
+package com.gwabs.spring_example.user
 
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.stereotype.Component
 
 @Component
-public class UserDAO {
+class UserDAO {
+    val usersList: List<User>
+        get() = Companion.usersList
 
-
-    private static List<User> usersList = new ArrayList<>();
-    private static int userCount = 0;
-
-    static {
-        usersList.add(new User(++userCount,"Abubakar Abdullahi","18 - 09 - 1996","Mobile Application Developer","Single", User.Gender.Male));
-        usersList.add(new User(++userCount,"Abubakar Aliyu","18 - 09 - 1996","Mobile Application Developer","Single", User.Gender.Male));
-        usersList.add(new User(++userCount,"Abubakar Hauwa","18 - 09 - 1996","Mobile Application Developer","Single",User.Gender.Femalle));
-        usersList.add(new User(++userCount,"Abubakar Buhari","18 - 09 - 1996","Mobile Application Developer","Single", User.Gender.Male));
-        usersList.add(new User(++userCount,"Abubakar Abbah","18 - 09 - 1996","Mobile Application Developer","Single", User.Gender.Male));
-        usersList.add(new User(++userCount,"Abubakar Kopat","18 - 09 - 1996","Mobile Application Developer","Single", User.Gender.Male));
-
+    fun saveUser(user: User): User {
+        user.id = ++userCount
+        Companion.usersList.add(user)
+        return user
     }
 
-    public List<User> getUsersList(){
-
-        return usersList;
-    }
-
-
-    public User saveUser(User user){
-        user.setId(++userCount);
-        usersList.add(user);
-
-        return user;
-    }
-
-
-    public User getSpecificUser(int id ) {
-
-
-        User user = null;
-        for (int i = 0; i <= usersList.size()-1; i++) {
-            if (usersList.get(i).getId() == id) {
-                user = usersList.get(i);
-                break;
+    fun getSpecificUser(id: Int): User? {
+        var user: User? = null
+        for (i in 0..Companion.usersList.size - 1) {
+            if (Companion.usersList[i].id == id) {
+                user = Companion.usersList[i]
+                break
             } else {
-                user = null;
+                user = null
             }
         }
-        return user;
+        return user
     }
 
-    public String deleteUser(int id){
-        String message = "";
-        for (int i = 0; i < usersList.size(); i++) {
-            if (usersList.get(i).getId() == id) {
-                usersList.remove(i);
-                message = "Deleted Successfully";
-                break;
+    fun deleteUser(id: Int): String {
+        var message = ""
+        for (i in Companion.usersList.indices) {
+            if (Companion.usersList[i].id == id) {
+                Companion.usersList.removeAt(i)
+                message = "Deleted Successfully"
+                break
             } else {
-                message = "User not found";
+                message = "User not found"
             }
         }
-        return message;
+        return message
+    }
+
+    companion object {
+        private val usersList: MutableList<User> = ArrayList()
+        private var userCount = 0
+
+        init {
+            usersList.add(
+                User(
+                    ++userCount,
+                    "Abubakar Abdullahi",
+                    "18 - 09 - 1996",
+                    "Mobile Application Developer",
+                    "Single",
+                    User.Gender.Male
+                )
+            )
+            usersList.add(
+                User(
+                    ++userCount,
+                    "Abubakar Aliyu",
+                    "18 - 09 - 1996",
+                    "Mobile Application Developer",
+                    "Single",
+                    User.Gender.Male
+                )
+            )
+            usersList.add(
+                User(
+                    ++userCount,
+                    "Abubakar Hauwa",
+                    "18 - 09 - 1996",
+                    "Mobile Application Developer",
+                    "Single",
+                    User.Gender.Femalle
+                )
+            )
+            usersList.add(
+                User(
+                    ++userCount,
+                    "Abubakar Buhari",
+                    "18 - 09 - 1996",
+                    "Mobile Application Developer",
+                    "Single",
+                    User.Gender.Male
+                )
+            )
+            usersList.add(
+                User(
+                    ++userCount,
+                    "Abubakar Abbah",
+                    "18 - 09 - 1996",
+                    "Mobile Application Developer",
+                    "Single",
+                    User.Gender.Male
+                )
+            )
+            usersList.add(
+                User(
+                    ++userCount,
+                    "Abubakar Kopat",
+                    "18 - 09 - 1996",
+                    "Mobile Application Developer",
+                    "Single",
+                    User.Gender.Male
+                )
+            )
+        }
     }
 }
