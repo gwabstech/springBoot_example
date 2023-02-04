@@ -19,9 +19,11 @@ public class UserController {
 
 
     private UserRepository userRepo;
-    public UserController(UserRepository userRepo){
+    private PostRepository postRepo;
+    public UserController(UserRepository userRepo,PostRepository postRepo){
 
         this.userRepo = userRepo;
+        this.postRepo = postRepo;
     }
 
     @GetMapping("/users")
@@ -29,7 +31,7 @@ public class UserController {
         return userRepo.findAll();
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/user/{id}")
     public Optional<User> getSpecificUser(@PathVariable int id){
        Optional<User> user =  userRepo.findById(id);
        if (user.isEmpty()){
@@ -40,7 +42,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/users/delete_user/{id}")
+    @DeleteMapping("/user/delete_user/{id}")
     public message deleteSpecificUser(@PathVariable int id){
         userRepo.deleteById(id);
         return new message(ResponseEntity.status(200).build().getStatusCode().value(),"User"+ id+ " Deleted",null);
@@ -48,7 +50,7 @@ public class UserController {
 
 
 
-    @PostMapping("/users")
+    @PostMapping("/user")
     public message createUser(@Valid @RequestBody User user){
 
         /*
@@ -98,7 +100,7 @@ public class UserController {
      */
 
     // return with link hateos
-    @GetMapping("/users/h/{id}")
+    @GetMapping("/user/h/{id}")
     public EntityModel<User> retrieveUser(@PathVariable int id) {
         Optional<User> user = userRepo.findById(id);
 
@@ -111,6 +113,53 @@ public class UserController {
         entityModel.add(link.withRel("all-users"));
 
         return entityModel;
+    }
+
+
+    // get users post
+    @GetMapping("/user/{user_id}/post")
+    public List<Post> getPostForUser(@PathVariable int user_id){
+
+        Optional<User> user = userRepo.findById(user_id);
+
+        if (user.isEmpty())
+            throw new UserNotFoundException("id"+user_id);
+
+       return user.get().getPostList();
+
+
+    }
+
+
+    @GetMapping("/user/{user_id}/post/{post_id}")
+    public Optional<Post> getUsersPostById(@PathVariable int user_id, @PathVariable int post_id){
+
+        Optional<User> user = userRepo.findById(user_id);
+
+        if (user.isEmpty())
+            throw new UserNotFoundException("id"+user_id);
+        return postRepo.findById(post_id);
+    }
+
+
+    // creat post api
+    @PostMapping("/user/{user_id}/post")
+    public ResponseEntity<Object> CreatePostForUser(@PathVariable int user_id,@Valid @RequestBody Post post){
+
+        Optional<User> user = userRepo.findById(user_id);
+
+        if (user.isEmpty())
+            throw new UserNotFoundException("id"+user_id);
+
+        post.setUser(user.get());
+        Post savedPost = postRepo.save(post);
+
+       URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+               .path("/{id}")
+               .buildAndExpand(savedPost.getId())
+               .toUri();
+
+       return  ResponseEntity.created(location).build();
     }
 
 }

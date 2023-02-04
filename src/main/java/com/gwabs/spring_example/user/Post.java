@@ -2,12 +2,16 @@ package com.gwabs.spring_example.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Post {
 
     @Id
+    @GeneratedValue
     private Integer id;
+
+    @Size(min = 20)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,7 +39,17 @@ public class Post {
         return description;
     }
 
+
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", user=" + user +
+                '}';
     }
 }

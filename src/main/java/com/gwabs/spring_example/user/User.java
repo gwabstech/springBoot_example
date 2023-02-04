@@ -27,6 +27,13 @@ public class User {
     //@JsonIgnore
     private String name;
 
+    public List<Post> getPostList() {
+        return postList;
+    }
+
+    public void setPostList(List<Post> postList) {
+        this.postList = postList;
+    }
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
